@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Student;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Course extends Model
 {
     //
+    use HasUuids;
+
     protected $fillable = [
         'title',
         'description'
@@ -19,7 +22,7 @@ class Course extends Model
 
     public function students(){
         return $this->belongsToMany(Student::class)
-                    ->withPivot('status')
+                    ->withPivot('id','status')
                     ->withTimestamps();
     }
 }
