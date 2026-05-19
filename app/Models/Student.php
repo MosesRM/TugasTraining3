@@ -13,6 +13,10 @@ class Student extends Model
         'email'
     ];
     
+    // biar tidak auto increment karena kita pake uuid
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     public function course(){
         return $this->belongsToMany(Course::class)
         ->withPivot('status')

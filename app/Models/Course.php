@@ -13,8 +13,11 @@ class Course extends Model
         'description'
     ];
 
-    public function students()
-    {
+    // biar tidak auto increment karena kita pake uuid
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    public function students(){
         return $this->belongsToMany(Student::class)
                     ->withPivot('status')
                     ->withTimestamps();
