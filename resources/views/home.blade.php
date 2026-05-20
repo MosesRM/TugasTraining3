@@ -24,8 +24,8 @@
 
                     <tr id = "student-row-{{ $student->id }}">
                         <td>{{ $student->id }}</td>
-                        <td>{{ $student->name }}</td>
-                        <td>{{ $student->email }}</td>
+                        <td class = "student-name">{{ $student->name }}</td>
+                        <td class = "student-email">{{ $student->email }}</td>
                         <td>
                             <button 
                                 data-id = "{{ $student->id }}"
@@ -77,8 +77,8 @@
 
                     <tr id = "course-row-{{ $course->id }}">
                         <td>{{ $course->id }}</td>
-                        <td>{{ $course->title }}</td>
-                        <td>{{ $course->description }}</td>
+                        <td class="course-title">{{ $course->title }}</td>
+                        <td class="course-description">{{ $course->description }}</td>
                         <td>
                             <button
                                 data-id = "{{ $course->id }}"
@@ -324,19 +324,17 @@
     // function menentukan apakah create atau edit data student
     function confirmStudent(){
         if (studentMode === 'create') {
-        
             addStudent();
         } else {
-            // logic update student
+            updateStudent();
         }
     }
 
     function confirmCourse(){
         if (courseMode === 'create') {
-        
             addCourse();
         } else {
-            // logic update course
+            updateCourse();
         }
     }
 
@@ -345,7 +343,7 @@
         const name = document.getElementById('student_name').value;
         const email = document.getElementById('student_email').value;
         
-
+    
         fetch('/add-student', {
 
             method: 'POST',
@@ -361,6 +359,7 @@
             })
 
         })
+
 
         .then(response => response.json())
 
@@ -408,6 +407,7 @@
             // kosongkan input setelah submit
             document.getElementById('student_name').value = '';
             document.getElementById('student_email').value = '';
+            closeModal('student');
         })
     }
 
@@ -480,7 +480,66 @@
             // kosongkan input setelah submit
             document.getElementById('course_title').value = '';
             document.getElementById('course_description').value = '';
+            closeModal('course');
         })
+    }
+
+    function updateStudent(){
+        const id = document.getElementById('student_id').value;
+        const name = document.getElementById('student_name').value;
+        const email = document.getElementById('student_email').value;
+
+
+        fetch('/edit-student/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                student_name: name,
+                student_email: email
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const row = document.getElementById(`student-row-${id}`);
+            row.querySelector('.student-name').innerText = data.student.name;
+            row.querySelector('.student-email').innerText = data.student.email;
+            const editButton = row.querySelector('button');
+            editButton.dataset.name = data.student.name;
+            editButton.dataset.email = data.student.email;
+            closeModal('student');
+        });
+    }
+
+    function updateCourse(){
+        const id = document.getElementById('course_id').value;
+        const title = document.getElementById('course_title').value;
+        const description = document.getElementById('course_description').value;
+
+
+        fetch('/edit-course/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                course_title: title,
+                course_description: description
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const row = document.getElementById(`course-row-${id}`);
+            row.querySelector('.course-title').innerText = data.course.title;
+            row.querySelector('.course-description').innerText = data.course.description;
+            const editButton = row.querySelector('button');
+            editButton.dataset.title = data.course.title;
+            editButton.dataset.description = data.course.description;
+            closeModal('course');
+        });
     }
 
 </script>

@@ -24,6 +24,7 @@ class Student extends Model
     public function course(){
         return $this->belongsToMany(Course::class)
         ->withPivot('id', 'status')
-        ->withTimestamps();
+        ->withTimestamps()
+        ->orderByPivot( 'id');
     }
 }
